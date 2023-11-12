@@ -13,6 +13,22 @@ describe('HTTP server', () => {
     expect(response.statusCode).toEqual(404);
   });
 
+  describe('when GET /', () => {
+    it('should return 200 and welcome page api', async () => {
+      const server = await createServer({});
+
+      const response = await server.inject({
+        method: 'GET',
+        url: '/',
+      });
+
+      const responseJson = JSON.parse(response.payload);
+
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.value).toEqual('Welcome to forum-api v2!');
+    });
+  });
+
   it('should handle server error correctly', async () => {
     const requestPayload = {
       username: 'akbar',
