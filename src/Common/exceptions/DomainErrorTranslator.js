@@ -63,6 +63,12 @@ DomainErrorTranslator._directories = {
   'DELETE_COMMENT_REPLIES.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError(
     'unable delete comment replies because the data type does not match',
   ),
+  'NEW_COMMENT_LIKES.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError(
+    'unable like comment because the required property does not exist',
+  ),
+  'NEW_COMMENT_LIKES.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError(
+    'unable like comment because the data type does not match',
+  ),
 };
 
 module.exports = DomainErrorTranslator;
