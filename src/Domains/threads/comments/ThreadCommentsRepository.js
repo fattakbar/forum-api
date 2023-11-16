@@ -10,6 +10,10 @@ class ThreadCommentsRepository {
     throw new Error('THREAD_COMMENTS_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 
+  async getNumberOfCommentsByThread(threadId) {
+    throw new Error('THREAD_COMMENTS_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+  }
+
   async deleteCommentById(commentId) {
     throw new Error('THREAD_COMMENTS_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }

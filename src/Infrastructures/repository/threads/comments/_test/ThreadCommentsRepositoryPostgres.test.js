@@ -6,6 +6,7 @@ const UsersTableTestHelper = require('../../../../../../tests/UsersTableTestHelp
 const ThreadsTableTestHelper = require('../../../../../../tests/ThreadsTableTestHelper');
 const ThreadCommentsRepositoryPostgres = require('../ThreadCommentsRepositoryPostgres');
 const ThreadCommentsTableTestHelper = require('../../../../../../tests/ThreadCommentsTableTestHelper');
+const ThreadCommentLikesTableTestHelper = require('../../../../../../tests/ThreadCommentLikesTableTestHelper');
 const NotFoundError = require('../../../../../Common/exceptions/NotFoundError');
 const AuthorizationError = require('../../../../../Common/exceptions/AuthorizationError');
 
@@ -127,6 +128,83 @@ describe('ThreadCommentsRepositoryPostgres', () => {
         { ...firstComment, username: 'dicoding' },
         { ...secondComment, username: 'akbar' },
       ]);
+    });
+  });
+
+  describe('getNumberOfCommentsByThread function', () => {
+    it('should return empty array when thread has no comments', async () => {
+      await UsersTableTestHelper.addUser({});
+      await ThreadsTableTestHelper.addThread({});
+
+      const threadCommentsRepositoryPostgres =
+        new ThreadCommentsRepositoryPostgres(pool, {});
+
+      const comment =
+        await threadCommentsRepositoryPostgres.getCommentsFromThread(
+          'threads-123',
+        );
+
+      expect(comment).toStrictEqual([]);
+    });
+
+    it('should return all liked comments correctly', async () => {
+      const expectedResult = [
+        {
+          likes: 1,
+          thread_comment_id: 'comment-123',
+        },
+      ];
+
+      await UsersTableTestHelper.addUser(firstUser);
+      await ThreadsTableTestHelper.addThread({});
+
+      await ThreadCommentsTableTestHelper.addCommentToThread({
+        id: firstComment.id,
+        owner: firstUser.id,
+        content: firstComment.content,
+        date: firstComment.date,
+      });
+
+      await ThreadCommentLikesTableTestHelper.addLikeComment({});
+
+      const threadCommentsRepositoryPostgres =
+        new ThreadCommentsRepositoryPostgres(pool, {});
+
+      const liked =
+        await threadCommentsRepositoryPostgres.getNumberOfCommentsByThread(
+          'threads-123',
+        );
+
+      expect(liked).toStrictEqual(expectedResult);
+    });
+
+    it('should return all disliked comments correctly', async () => {
+      const expectedResult = [
+        {
+          likes: 0,
+          thread_comment_id: 'comment-123',
+        },
+      ];
+
+      await UsersTableTestHelper.addUser(firstUser);
+      await ThreadsTableTestHelper.addThread({});
+
+      await ThreadCommentsTableTestHelper.addCommentToThread({
+        id: firstComment.id,
+        owner: firstUser.id,
+        content: firstComment.content,
+        date: firstComment.date,
+      });
+
+      const threadCommentsRepositoryPostgres =
+        new ThreadCommentsRepositoryPostgres(pool, {});
+
+      const liked =
+        await threadCommentsRepositoryPostgres.getNumberOfCommentsByThread(
+          'threads-123',
+        );
+
+      expect(liked).toStrictEqual(expectedResult);
     });
   });
 

@@ -25,6 +25,7 @@ describe('GetThreadDetailUseCase', () => {
           username: 'akbar',
           date: currentDate,
           content: 'comment',
+          likeCount: 1,
           replies: [
             {
               id: 'replies-123',
@@ -66,6 +67,15 @@ describe('GetThreadDetailUseCase', () => {
       ]),
     );
 
+    mockThreadCommentsRepository.getNumberOfCommentsByThread = jest.fn(() =>
+      Promise.resolve([
+        {
+          likes: 1,
+          thread_comment_id: 'comment-123',
+        },
+      ]),
+    );
+
     mockThreadCommentRepliesRepository.getRepliesCommentFromThread = jest.fn(
       () =>
         Promise.resolve([
@@ -96,6 +106,10 @@ describe('GetThreadDetailUseCase', () => {
     );
 
     expect(
+      mockThreadCommentsRepository.getNumberOfCommentsByThread,
+    ).toBeCalledWith(payload.id);
+
+    expect(
       mockThreadCommentRepliesRepository.getRepliesCommentFromThread,
     ).toBeCalledWith(payload.id);
   });
@@ -119,6 +133,7 @@ describe('GetThreadDetailUseCase', () => {
           username: 'akbar',
           date: currentDate,
           content: 'comment',
+          likeCount: 0,
           replies: [
             {
               id: 'replies-123',
@@ -133,6 +148,7 @@ describe('GetThreadDetailUseCase', () => {
           username: 'akbar',
           date: currentDate,
           content: '**komentar telah dihapus**',
+          likeCount: 0,
           replies: [],
         },
       ],
@@ -174,6 +190,19 @@ describe('GetThreadDetailUseCase', () => {
       ]),
     );
 
+    mockThreadCommentsRepository.getNumberOfCommentsByThread = jest.fn(() =>
+      Promise.resolve([
+        {
+          likes: 0,
+          thread_comment_id: 'comment-123',
+        },
+        {
+          likes: 0,
+          thread_comment_id: 'comment-124',
+        },
+      ]),
+    );
+
     mockThreadCommentRepliesRepository.getRepliesCommentFromThread = jest.fn(
       () =>
         Promise.resolve([
@@ -202,6 +231,10 @@ describe('GetThreadDetailUseCase', () => {
     expect(mockThreadCommentsRepository.getCommentsFromThread).toBeCalledWith(
       payload.id,
     );
+
+    expect(
+      mockThreadCommentsRepository.getNumberOfCommentsByThread,
+    ).toBeCalledWith(payload.id);
 
     expect(
       mockThreadCommentRepliesRepository.getRepliesCommentFromThread,
