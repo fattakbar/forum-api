@@ -7,7 +7,7 @@ class DetailCommentLikes {
   }
 
   _verifyPayload({ likes }) {
-    if (!likes) {
+    if (likes === undefined) {
       throw new Error('DETAIL_COMMENT_LIKES.NOT_CONTAIN_NEEDED_PROPERTY');
     }
 

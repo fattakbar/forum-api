@@ -39,6 +39,25 @@ class ThreadCommentsRepositoryPostgres extends ThreadCommentsRepository {
     return rows;
   }
 
+  async getNumberOfCommentsByThread(threadId) {
+    const numberOfCommentsQuery = await this._pool.query({
+      text: `SELECT CAST
+        ( COUNT ( tcl.ID ) AS INTEGER ) AS likes,
+        tc.ID AS thread_comment_id 
+        FROM thread_comments tc
+        LEFT JOIN thread_comment_likes tcl 
+        ON tc.ID = tcl.comment_id 
+        WHERE thread_id = $1 
+        GROUP BY thread_id, thread_comment_id 
+        ORDER BY thread_id`,
+      values: [threadId],
+    });
+
+    const { rows } = numberOfCommentsQuery;
+
+    return rows;
+  }
+
   async deleteCommentById(commentId) {
     const deleteCommentInThreadQuery = await this._pool.query({
       text: 'UPDATE thread_comments SET is_deleted = TRUE WHERE id = $1',
